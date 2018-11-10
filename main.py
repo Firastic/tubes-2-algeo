@@ -18,11 +18,6 @@ edges = []
 is2D = False
 is3D = False
 window_name = 'cartesian'
-angle = 0.0
-lx = 0.0
-lz = -1.0
-x = 0.0
-z = 5.0
 currentCommand = ""
 
 def displayObject():
