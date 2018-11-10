@@ -42,10 +42,12 @@ def displayCartesian2D():
 	glEnd()
 
 def displayCartesian3D():
+	#Menampilkan sumbu x, y, dan z
 	#Todo
 	return
 
 def input2D():
+	#Meminta input untuk objek 2D
 	global shape
 	N = int(raw_input("Masukkan nilai N\n"))
 	print("Masukkan " + str(N) + " buah titik 2 dimensi")
@@ -58,10 +60,11 @@ def input2D():
 	shape = Object2D(vertices, edges)
 
 def input3D():
-	#Todo
+	#Meminta input untuk objek 3D
 	return
 
 def inputDimensionChoice():
+	#Meminta input dimensi yang diinginkan
 	global is2D,is3D
 	x = int(input("Keluarkan 2 jika ingin 2 dimensi, dan 3 jika ingin 3D\n"))
 	while(x != 2 and x != 3):
@@ -73,7 +76,7 @@ def inputDimensionChoice():
 		is3D = True
 
 def keyPressed(key, x, y):
-	#Todo: Writing while displaying on terminal
+	#Menampilkan output pada terminal saat OpenGL telah dijalankan
 	global currentCommand
 	if(key == "\n"):
 		currentCommand = ""
@@ -85,7 +88,37 @@ def keyPressed(key, x, y):
 		currentCommand += key
 	print(key, end='')
 
+def display():
+	#Menampilkan objek dan sumbu kartesius
+	glClearColor(1.0, 1.0, 1.0, 0.0)
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+	glPushMatrix()
+	if(is2D):
+		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
+		displayCartesian2D()
+		displayObject()
+	else:
+		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
+		displayCartesian3D()
+		displayObject()
+	glPopMatrix()
+	glutSwapBuffers()
+	return
+
+def changeSize(w, h):
+	#Menormalisasi windows saat terjadi perubahan skala
+	if(h == 0):
+		h = 1
+	ratio = 1.0* w / h
+	glMatrixMode(GL_PROJECTION)
+	glLoadIdentity()
+	glViewport(0, 0, w, h)
+	gluPerspective(45,ratio,1,1000)
+	glMatrixMode(GL_MODELVIEW)
+
+
 def openGLDisplay():
+	#Menampilkan tampilan openGL
 	glutInit(sys.argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
 	glutInitWindowSize(400,400)
@@ -103,31 +136,5 @@ def main():
 	else:
 		input3D()
 	openGLDisplay()
-
-def display():
-	glClearColor(1.0, 1.0, 1.0, 0.0)
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-	glPushMatrix()
-	if(is2D):
-		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian2D()
-		displayObject()
-	else:
-		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian3D()
-		displayObject()
-	glPopMatrix()
-	glutSwapBuffers()
-	return
-
-def changeSize(w, h):
-	if(h == 0):
-		h = 1
-	ratio = 1.0* w / h
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()
-	glViewport(0, 0, w, h)
-	gluPerspective(45,ratio,1,1000)
-	glMatrixMode(GL_MODELVIEW)
 
 main()
