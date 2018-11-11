@@ -38,8 +38,19 @@ def displayCartesian2D():
 
 def displayCartesian3D():
 	#Menampilkan sumbu x, y, dan z
-	#Todo
-	return
+	glColor3f(0.0, 0.0, 0.0)
+	glBegin(GL_LINES)
+	glVertex3fv((-1,0,0))
+	glVertex3fv((1,0,0))
+	glEnd()
+	glBegin(GL_LINES)
+	glVertex3fv((0,-1,0))
+	glVertex3fv((0,1,0))
+	glEnd()
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,-1))
+	glVertex3fv((0,0,1))
+	glEnd()
 
 def input2D():
 	#Meminta input untuk objek 2D
@@ -56,7 +67,15 @@ def input2D():
 
 def input3D():
 	#Meminta input untuk objek 3D
-	return
+	global shape
+	N = int(raw_input("Masukkan nilai N\n"))
+	print("Masukkan " + str(N) + " buah titik 3 dimensi")
+	for i in range(N):
+		x, y, z = map(float, raw_input().split())
+		arr = [x/25,y/25,z/25]
+		vertices.insert(len(vertices), arr)
+		edges.insert(len(edges),[i,(i+1)%N])
+	shape = Object3D(vertices, edges)
 
 def inputDimensionChoice():
 	#Meminta input dimensi yang diinginkan
@@ -126,7 +145,7 @@ def openGLDisplay():
 
 def main():
 	inputDimensionChoice()
-	if(is2D):		
+	if(is2D):
 		input2D()
 	else:
 		input3D()
