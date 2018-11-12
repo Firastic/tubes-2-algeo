@@ -55,10 +55,10 @@ def displayCartesian3D():
 def input2D():
 	#Meminta input untuk objek 2D
 	global shape
-	N = int(raw_input("Masukkan nilai N\n"))
+	N = int(input("Masukkan nilai N\n"))
 	print("Masukkan " + str(N) + " buah titik 2 dimensi")
 	for i in range(N):
-		x, y = map(float, raw_input().split())
+		x, y = map(float, input().split())
 		z = 0
 		arr = [x/25,y/25,z]
 		vertices.insert(len(vertices), arr)
@@ -68,10 +68,10 @@ def input2D():
 def input3D():
 	#Meminta input untuk objek 3D
 	global shape
-	N = int(raw_input("Masukkan nilai N\n"))
+	N = int(input("Masukkan nilai N\n"))
 	print("Masukkan " + str(N) + " buah titik 3 dimensi")
 	for i in range(N):
-		x, y, z = map(float, raw_input().split())
+		x, y, z = map(float, input().split())
 		arr = [x/25,y/25,z/25]
 		vertices.insert(len(vertices), arr)
 		edges.insert(len(edges),[i,(i+1)%N])
