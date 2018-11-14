@@ -94,12 +94,32 @@ def inputDimensionChoice():
 	else:
 		is3D = True
 
+def processCommand(command):
+	parsedCommand = command.split(' ')
+	func = parsedCommand[0].lower()
+	if(func == "translate"):
+		return
+	elif(func == "dilate"):
+		return
+	elif(func == "rotate"):
+		return
+	elif(func == "reflect"):
+		return
+	elif(func == "shear"):
+		return
+	elif(func == "stretch"):
+		return
+	elif(func == "custom"):
+		return
+
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
 	global currentCommand
-	if(key == "\n"):
+	if(ord(key) == 13):
+		print(end='\n',flush=True)
+		processCommand(currentCommand)
 		currentCommand = ""
-		print('\n', end='\n', flush=True)
+		transformationInput()
 		return
 	elif(ord(key) == 8):
 		key = '\b \b'
@@ -159,7 +179,7 @@ def changeSize(w, h):
 
 def transformationInput():
 	print("Masukkan transformasi yang diinginkan")
-	print(">>> ", end='')
+	print(">>> ", end='', flush=True)
 
 def openGLDisplay():
 	#Menampilkan tampilan openGL
