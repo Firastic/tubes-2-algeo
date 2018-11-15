@@ -8,18 +8,20 @@ import numpy as np
 
 class Matriks:
 	
-	def __init__(self,brs=1,kol=1):
+	def __init__(self,m = [[0]]):
 		# Inisialisasi semua elemen matriks diisi 0
-		self.M = np.array([[0.0]*kol for x in range(brs)])
-		self.brs = brs
-		self.kol = kol
-
-	def BangunMatriks(self,m):
-		# Konstruktor kedua yang membuat matriks baru
 		self.M = np.array(m)
 		self.brs = np.size(m,0)
 		self.kol = np.size(m,1)
-	
+
+	def AddRow(self,m):
+		self.M = np.append(self.M,m,axis = 0)
+		self.brs += 1
+
+	def AddColumn(self,m):		
+		self.M = np.append(self.M,m,axis = 1)
+		self.kol += 1
+
 	def GetNBrsEff(self):
 		return self.brs
 
@@ -36,7 +38,7 @@ class Matriks:
 		s = ""
 		for i in range(self.brs):
 			for j in range(self.kol):
-				s += "%.3f" % self.GetElmt(i, j)
+				s += "%.2f" % self.GetElmt(i, j)
 				if (j<self.kol-1):
 					s += " "
 				else:
@@ -45,20 +47,20 @@ class Matriks:
 
 	def __add__(self, mat):
 		# Penjumlahan matriks
-		mhsl = Matriks(self.brs,self.kol)
+		mhsl = Matriks([[0]*self.GetNKolEff() for x in range(self.GetNBrsEff())])
 		mhsl.M = self.M + mat.M
 		return mhsl
 
 	def __sub__(self, mat):
 		# Pengurangann matriks
-		mhsl = Matriks(self.brs,self.kol)
+		mhsl = Matriks([[0]*self.GetNKolEff() for x in range(self.GetNBrsEff())])
 		mhsl.M = self.M - mat.M
 		return mhsl
 
 	def __mul__(self,m1):
 		# Mengali matriks ini dengan matriks lain tanpa mengubah value keduanya
 		# Input selalu benar : neff kolom Matriks ini = neff baris matriks lainnya
-		mhsl = Matriks(self.GetNBrsEff(),m1.GetNKolEff())
+		mhsl = Matriks([[0]*m1.GetNKolEff() for x in range(self.GetNBrsEff())])
 		sum = 0.0
 		for i in range(mhsl.GetNBrsEff()):
 			for j in range(mhsl.GetNKolEff()):
@@ -92,10 +94,9 @@ class Object():
 class Object2D(Object):
 	def translate(self, dx, dy):
 		#Melakukan translasi tiap point sejauh dx,dy
-		mhsl = Matriks()
-		mhsl.BangunMatriks([[self.vertices.GetElmt(0,0)],[self.vertices.GetElmt(1,0)],[1]])
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[1,0,dx],[0,1,dy],[0,0,1]])
+		mhsl = Matriks([[self.vertices.GetElmt(i,j) for j in range(self.vertices.GetNKolEff())] for i in range(self.vertices.GetNBrsEff())])
+		mhsl.AddRow([[1]*mhsl.GetNKolEff()])
+		mtrans = Matriks([[1,0,dx],[0,1,dy],[0,0,1]])
 		mhsl = mtrans*mhsl
 		for i in range(mhsl.brs-1): #buang baris terakhir
 			for j in range(mhsl.kol):
@@ -103,33 +104,29 @@ class Object2D(Object):
 
 	def dilate(self, k):
 		#Melakukan dilatasi tiap point sebesar k
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[k,0],[0,k]])
+		mtrans = Matriks([[k,0],[0,k]])
 		self.vertices = mtrans*self.vertices 
 
 	def rotate(self, deg, a, b):
 		#Melakukan rotasi tiap titik dengan deg derajat dengan titik pusat (a,b)
 		angle = radians(deg)
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[cos(angle),-1*sin(angle)],[sin(angle),cos(angle)]])
-		mpusat = Matriks()
-		mpusat.BangunMatriks([[a],[b]])
+		mtrans = Matriks([[cos(angle),-1*sin(angle)],[sin(angle),cos(angle)]])
+		mpusat = Matriks([[a],[b]])
 		self.vertices = mtrans*(self.vertices - mpusat) + mpusat 
 
 	def reflect(self, param):
 		#Melakukan refleksi dengan parameter
-		mtrans = Matriks()
 		if (param == "y"):
-			mtrans.BangunMatriks([[-1,0],[0,1]])
+			mtrans = Matriks([[-1,0],[0,1]])
 			self.vertices = mtrans*self.vertices
 		elif (param == "x"):
-			mtrans.BangunMatriks([[1,0],[0,-1]])
+			mtrans = Matriks([[1,0],[0,-1]])
 			self.vertices = mtrans*self.vertices
 		elif (param == "y=x"):
-			mtrans.BangunMatriks([[0,1],[1,0]])
+			mtrans = Matriks([[0,1],[1,0]])
 			self.vertices = mtrans*self.vertices
 		elif (param == "y=-x"):
-			mtrans.BangunMatriks([[0,-1],[-1,0]])
+			mtrans = Matriks([[0,-1],[-1,0]])
 			self.vertices = mtrans*self.vertices
 		else : # pencerminan (a,b) = rotasi 180 derajat terhadap titik a,b
 			p = param.split(',')
@@ -139,32 +136,29 @@ class Object2D(Object):
 			p[1] = p[1].replace(')',"") # menghapus kurung apabila ada
 			a = float(p[0])
 			b = float(p[1])
-			angle = 180
-			mtrans.BangunMatriks([[a],[b]])
-			self.rotate(self.vertices,mtrans,angle)
+			mtrans = Matriks([[-1,0],[0,-1]])
+			mpusat = Matriks([[a],[b]])
+			self.vertices = mtrans*(self.vertices-mpusat)+mpusat
 		
 	def shear(self, param, k):
 		#Melakukan operasi shear pada objek
-		mtrans = Matriks()
 		if (param == "x"):
-			mtrans.BangunMatriks([[1,k],[0,1]])
+			mtrans = Matriks([[1,k],[0,1]])
 		elif (param == "y"): #y
-			mtrans.BangunMatriks([[1,0],[k,1]])
+			mtrans = Matriks([[1,0],[k,1]])
 		self.vertices = mtrans*self.vertices
 
 	def stretch(self, param, k):
 		#Melakukan operasi stretch pada objek
-		mtrans = Matriks()
 		if (param == "x"):
-			mtrans.BangunMatriks([[1,0],[0,k]])
+			mtrans = Matriks([[1,0],[0,k]])
 		elif (param == "y"): #y
-			mtrans.BangunMatriks([[k,0],[0,1]])
+			mtrans = Matriks([[k,0],[0,1]])
 		self.vertices = mtrans*self.vertices
 
 	def custom(self, a, b, c, d):
 		#Melakukan transformasi dengan matriks [[a,b][c,d]]
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[a,b],[c,d]])
+		mtrans = Matriks([[a,b],[c,d]])
 		self.vertices = mtrans * self.vertices
 
 	def multiple(self, n):
@@ -173,72 +167,121 @@ class Object2D(Object):
 
 class Object3D(Object):
 	def translate(self, dx, dy, dz):	
-		mhsl = Matriks()
-		mhsl.BangunMatriks([[self.vertices.GetElmt(0,0)],[self.vertices.GetElmt(1,0)],[self.vertices.GetElmt(2,0)],[1]])
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[1,0,0,dx],[0,1,0,dy],[0,0,1,dz],[0,0,0,1]])
+		mhsl = Matriks([[self.vertices.GetElmt(i,j) for j in range(self.vertices.GetNKolEff())] for i in range(self.vertices.GetNBrsEff())])
+		mhsl.AddRow([[1]*mhsl.GetNKolEff()])
+		mtrans = Matriks([[1,0,0,dx],[0,1,0,dy],[0,0,1,dz],[0,0,0,1]])
 		mhsl = mtrans*mhsl
 		for i in range(mhsl.brs-1): #buang baris terakhir
 			for j in range(mhsl.kol):
 				self.vertices.SetElmt(i,j,mhsl.GetElmt(i,j))
 
 	def dilate(self, k):
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[k,0,0],[0,k,0],[0,0,k]])
+		mtrans = Matriks([[k,0,0],[0,k,0],[0,0,k]])
 		self.vertices = mtrans*self.vertices
 
 	def rotate(self, deg, a, b, c):
 		# rotasi terhadap sumbu x apabila a = 1
 		angle = radians(deg)
-		mtrans = Matriks()
 		if (a == 1):
-			mtrans.BangunMatriks([[1,0,0],[0,cos(angle),-1*sin(angle)],[0,sin(angle),cos(angle)]])
+			mtrans = Matriks([[1,0,0],[0,cos(angle),-1*sin(angle)],[0,sin(angle),cos(angle)]])
 		elif (b == 1):
-			mtrans.BangunMatriks([[cos(angle),0,sin(angle)],[0,1,0],[-1*sin(angle),0,cos(angle)]])
+			mtrans = Matriks([[cos(angle),0,sin(angle)],[0,1,0],[-1*sin(angle),0,cos(angle)]])
 		elif (c == 1):
-			mtrans.BangunMatriks([[cos(angle), -1*sin(angle),0],[sin(angle), cos(angle),0],[0,0,1]])
+			mtrans = Matriks([[cos(angle), -1*sin(angle),0],[sin(angle), cos(angle),0],[0,0,1]])
 		self.vertices = mtrans*self.vertices
 
 
 	def reflect(self, param):
-		mtrans = Matriks()
 		if (param == "xy"):
-			mtrans.BangunMatriks([[1,0,0],[0,1,0],[0,0,-1]])
+			mtrans = Matriks([[1,0,0],[0,1,0],[0,0,-1]])
 		elif (param == "xz"):
-			mtrans.BangunMatriks([[1,0,0],[0,-1,0],[0,0,1]])
+			mtrans = Matriks([[1,0,0],[0,-1,0],[0,0,1]])
 		elif (param == "yz"):
-			mtrans.BangunMatriks([[-1,0,0],[0,1,0],[0,0,1]])
+			mtrans = Matriks([[-1,0,0],[0,1,0],[0,0,1]])
 		self.vertices = mtrans*self.vertices
 
 
 	def shear(self, param, k):
 		# Bentuk matriks transformasinya : [[1 sh(yx) sh (zx)],[sh(xy),1,sh(zy)],[sh(xz),sh(yz),1]]
-		mtrans = Matriks()
 		if (param == "x"):
-			mtrans.BangunMatriks([[1,0,0],[k,1,0],[k,0,1]])
+			mtrans = Matriks([[1,0,0],[k,1,0],[k,0,1]])
 		elif (param == "y"):
-			mtrans.BangunMatriks([[1,k,0],[0,1,0],[0,k,1]])
+			mtrans = Matriks([[1,k,0],[0,1,0],[0,k,1]])
 		elif (param == "z"):
-			mtrans.BangunMatriks([[1,0,k],[0,1,k],[0,0,1]])
+			mtrans = Matriks([[1,0,k],[0,1,k],[0,0,1]])
 		self.vertices = mtrans * self.vertices
 		
 
 	def stretch(self, param, k):
-		mtrans = Matriks()
 		if (param == "x"):
-			mtrans.BangunMatriks([[1,0,0],[0,k,0],[0,0,k]])
+			mtrans = Matriks([[1,0,0],[0,k,0],[0,0,k]])
 		elif (param == "y"):
-			mtrans.BangunMatriks([[k,0,0],[0,1,0],[0,0,k]])
+			mtrans = Matriks([[k,0,0],[0,1,0],[0,0,k]])
 		elif (param == "z"):
-			mtrans.BangunMatriks([[k,0,0],[0,k,0],[0,0,1]])
+			mtrans = Matriks([[k,0,0],[0,k,0],[0,0,1]])
 		self.vertices = mtrans * self.vertices
 
 	def custom(self, a, b, c, d, e, f, g, h, i):
-		mtrans = Matriks()
-		mtrans.BangunMatriks([[a,b,c],[d,e,f],[g,h,i]])
+		mtrans = Matriks([[a,b,c],[d,e,f],[g,h,i]])
 		self.vertices = mtrans * self.vertices
 
 	def multiple(self, n):
 		#for x in range(n)
 			#...
 		return
+
+# Ini contoh cara memakai
+n = int(input("Input N : "))
+x = float(input("x : "))
+y = float(input("y : "))
+v = Matriks([[x],[y]])
+for x in range(n-1):
+	x = float(input("x : "))
+	y = float(input("y : "))
+	v.AddColumn([[x],[y]])
+dua = Object2D(v,[[0]])
+menu = 0
+while (menu != 9):
+	print("Pilih menu : ")
+	print("1. Translasi\n2. Dilatasi\n3. Rotasi\n4. Refleksi\n5. Shear\n6. Stretch\n7. Custom\n8. Print\n9. Keluar")
+	menu = int(input("Pilih : "))
+	if (menu == 1):
+		dx = float(input("dx : "))
+		dy = float(input("dy : "))
+		dua.translate(dx,dy)
+		print(dua.vertices)
+	elif (menu == 2):
+		k = float(input("k : "))
+		dua.dilate(k)
+		print(dua.vertices)
+	elif (menu == 3):
+		d = float(input("sudut : "))
+		a = float(input("pusat x : "))
+		b = float(input("pusat y : "))
+		dua.rotate(d,a,b)
+		print(dua.vertices)
+	elif (menu == 4):
+		param = input("refleksi terhadap : ")
+		dua.reflect(param)
+		print(dua.vertices)
+	elif (menu == 5):
+		k = float(input("k : "))
+		param = input("shear terhadap : ")
+		dua.shear(param,k)
+		print(dua.vertices)
+	elif (menu == 6):
+		k = float(input("k : "))
+		param = input("stretch terhadap : ")
+		dua.stretch(param,k)
+		print(dua.vertices)
+	elif (menu == 7):
+		a = float(input("a : "))
+		b = float(input("b : "))
+		c = float(input("c : "))
+		d = float(input("d : "))
+		dua.custom(a,b,c,d)
+		print(dua.vertices)
+	elif (menu == 8) :
+		print(dua.vertices)
+	elif (menu != 9) :
+		print("Input tidak valid!")
