@@ -130,64 +130,76 @@ def processCommand(command):
 		return
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
-	iteration = 2000
+	iteration = 500
 	try:
-	if is3D:
-		temp = Object3D(shape.vertices,shape.edges)
-	else:
-		temp = Object2D(shape.vertices,shape.edges)
-	temp.initVertices = shape.initVertices
-	if(func == "translate"):
-		dx = float(parsedCommand[1])/10
-		dy = float(parsedCommand[2])/10
 		if is3D:
-			dz = float(parsedCommand[3])/10
-			temp.translate(dx,dy,dz)
+			temp = Object3D(shape.vertices,shape.edges)
 		else:
-			temp.translate(dx,dy)
-	elif(func == "dilate"):
-		k = float(parsedCommand[1])
-		temp.dilate(k)
-	elif(func == "rotate"):
-		degree = float(parsedCommand[1])
-		a = float(parsedCommand[2])
-		b = float(parsedCommand[3])
-		temp.rotate(degree,a,b)
-	elif(func == "reflect"):
-		param = parsedCommand[1]
-		temp.reflect(param)
-	elif(func == "shear"):
-		param = parsedCommand[1]
-		k = float(parsedCommand[2])
-		temp.shear(param,k)
-	elif(func == "stretch"):
-		param = parsedCommand[1]
-		k = float(parsedCommand[2])/10
-		temp.stretch(param,k)
-	elif(func == "custom"):
-		a = float(parsedCommand[1])
-		b = float(parsedCommand[2])
-		c = float(parsedCommand[3])
-		d = float(parsedCommand[4])
-		a /= 10
-		b /= 10
-		c /= 10
-		d /= 10
-		temp.custom(a,b,c,d)
-	elif(func == "help"):
-		commandList()
-		return
-	elif(func == "reset"):
-		temp.reset()
-	elif(func == "exit"):
-		exit()
-		return
-	else:
-		print("Command tidak valid, silakan ulangi")
-		return
-	temp.vertices -= shape.vertices
-	temp.vertices.M /= iteration
-	q.append([temp.vertices,iteration])
+			temp = Object2D(shape.vertices,shape.edges)
+		temp.initVertices = shape.initVertices
+		if(func == "translate"):
+			dx = float(parsedCommand[1])/10
+			dy = float(parsedCommand[2])/10
+			if is3D:
+				dz = float(parsedCommand[3])/10
+				temp.translate(dx,dy,dz)
+			else:
+				temp.translate(dx,dy)
+		elif(func == "dilate"):
+			k = float(parsedCommand[1])
+			temp.dilate(k)
+		elif(func == "rotate"):
+			degree = float(parsedCommand[1])
+			a = float(parsedCommand[2])
+			b = float(parsedCommand[3])
+			if is3D:
+				c = float(parsedCommand[4])
+				temp.rotate(degree,a,b,c)
+			else:
+				temp.rotate(degree,a,b)
+		elif(func == "reflect"):
+			param = parsedCommand[1]
+			temp.reflect(param)
+		elif(func == "shear"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])
+			if is3D:
+				k2 = float(parsedCommand[3])
+				temp.shear(param,k,k2)
+			else:
+				temp.shear(param,k)
+		elif(func == "stretch"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])
+			if is3D:
+				k2 = float(parsedCommand[3])
+				temp.stretch(param,k,k2)
+			else:
+				temp.stretch(param,k)
+		elif(func == "custom"):
+			a = float(parsedCommand[1])
+			b = float(parsedCommand[2])
+			c = float(parsedCommand[3])
+			d = float(parsedCommand[4])
+			a /= 10
+			b /= 10
+			c /= 10
+			d /= 10
+			temp.custom(a,b,c,d)
+		elif(func == "help"):
+			commandList()
+			return
+		elif(func == "reset"):
+			temp.reset()
+		elif(func == "exit"):
+			exit()
+			return
+		else:
+			print("Command tidak valid, silakan ulangi")
+			return
+		temp.vertices -= shape.vertices
+		temp.vertices.M /= iteration
+		q.append([temp.vertices,iteration])
 	except:
 		print("Terdapat parameter yang salah, silakan ulangi")
 

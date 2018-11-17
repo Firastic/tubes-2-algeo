@@ -197,6 +197,8 @@ class Object3D(Object):
 			mtrans = Matriks([[1,0,0],[0,-1,0],[0,0,1]])
 		elif (param == "yz"):
 			mtrans = Matriks([[-1,0,0],[0,1,0],[0,0,1]])
+		elif (param == "o"):
+			mtrans = Matriks([[-1,0,0],[0,-1,0],[0,0,-1]])
 		self.vertices = mtrans*self.vertices
 
 
@@ -208,8 +210,6 @@ class Object3D(Object):
 			mtrans = Matriks([[1,k1,0],[0,1,0],[0,k2,1]])
 		elif (param == "z"):
 			mtrans = Matriks([[1,0,k1],[0,1,k2],[0,0,1]])
-		elif (param == "o"):
-			mtrans = Matriks([[-1,0,0],[0,-1,0],[0,0,-1]])
 		self.vertices = mtrans * self.vertices
 
 
