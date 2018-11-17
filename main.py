@@ -94,79 +94,75 @@ def inputDimensionChoice():
 		is3D = True
 
 def change():
-	global q
-	if(not q):
-		return
-	q[0][-1] -= 1
-	if(q[0][0] == "translate"):
-		shape.translate(q[0][1],q[0][2])
-	elif(q[0][0] == "dilate"):
-		shape.dilate(q[0][1])
-	elif(q[0][0] == "rotate"):
-		shape.rotate(q[0][1],q[0][2],q[0][3])
-	elif(q[0][0] == "custom"):
-		shape.vertices -= q[0][1]
-
-	if(q[0][-1] == 0):
-		q.pop(0)
-		
-
-def hello():
-	print('hello')
+	#Mengubah nilai titik sesuai yang diinginkan secara minimal
+	if(q):
+		q[0][-1] -= 1
+		shape.vertices += q[0][0]
+		if(q[0][-1] == 0):
+			q.pop(0)
 
 def processCommand(command):
+	#Menjalankan command yang telah diberikan
 	global q
+	if(q):
+		print("Sedang terjadi transformasi, silakan tunggu transformasi selesai")
+		return
 	print(command)
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
 	iteration = 2000
-	#try:
-	if(func == "translate"):
-		dx = float(parsedCommand[1])/10
-		dy = float(parsedCommand[2])/10
-		q.append(["translate",dx/iteration,dy/iteration,iteration])
-	elif(func == "dilate"):
-		k = float(parsedCommand[1])
-		q.append(["dilate", pow(k,(1.0/iteration)), iteration])
-	elif(func == "rotate"):
-		degree = float(parsedCommand[1])
-		a = float(parsedCommand[2])
-		b = float(parsedCommand[3])
-		q.append(["rotate",degree/iteration,a,b,iteration])
-	elif(func == "reflect"):
-		param = parsedCommand[1]
-		shape.reflect(param)
-	elif(func == "shear"):
-		param = parsedCommand[1]
-		k = float(parsedCommand[2])
-		shape.shear(param,k)
-	elif(func == "stretch"):
-		param = parsedCommand[1]
-		k = float(parsedCommand[2])
-		print(param,k)
-		shape.stretch(param,k)
-	elif(func == "custom"):
-		a = float(parsedCommand[1])
-		b = float(parsedCommand[2])
-		c = float(parsedCommand[3])
-		d = float(parsedCommand[4])
-		temp = shape
-		temp.custom(a,b,c,d)
+	try:
+		temp = Object2D(shape.vertices,shape.edges)
+		temp.initVertices = shape.initVertices
+		if(func == "translate"):
+			dx = float(parsedCommand[1])/10
+			dy = float(parsedCommand[2])/10
+			temp.translate(dx,dy)
+		elif(func == "dilate"):
+			k = float(parsedCommand[1])
+			temp.dilate(k)
+		elif(func == "rotate"):
+			degree = float(parsedCommand[1])
+			a = float(parsedCommand[2])
+			b = float(parsedCommand[3])
+			temp.rotate(degree,a,b)
+		elif(func == "reflect"):
+			param = parsedCommand[1]
+			temp.reflect(param)
+		elif(func == "shear"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])
+			temp.shear(param,k)
+		elif(func == "stretch"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])/10
+			temp.stretch(param,k)
+		elif(func == "custom"):
+			a = float(parsedCommand[1])
+			b = float(parsedCommand[2])
+			c = float(parsedCommand[3])
+			d = float(parsedCommand[4])
+			a /= 10
+			b /= 10
+			c /= 10
+			d /= 10
+			temp.custom(a,b,c,d)
+		elif(func == "help"):
+			commandList()
+			return
+		elif(func == "reset"):
+			temp.reset()
+		elif(func == "exit"):
+			exit()
+			return
+		else:
+			print("Command tidak valid, silakan ulangi")
+			return
 		temp.vertices -= shape.vertices
-		print(temp.vertices.M)
 		temp.vertices.M /= iteration
-		print(temp.vertices.M)
-		q.append(["custom",temp.vertices,iteration])
-	elif(func == "help"):
-		commandList()
-	elif(func == "reset"):
-		shape.reset()
-	elif(func == "exit"):
-		exit()
-	else:
-		print("Command tidak valid, silakan ulangi")
-	#except:
-#		print("Terdapat parameter yang salah, silakan ulangi")
+		q.append([temp.vertices,iteration])
+	except:
+		print("Terdapat parameter yang salah, silakan ulangi")
 
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
@@ -186,6 +182,7 @@ def keyPressed(key, x, y):
 		print(key.decode('utf-8'), end='', flush=True)
 
 def specialKey(key, x, y):
+	#Special key untuk menggerakkan kamera
 	global eyeX,eyeY,eyeZ,moveX,moveY,moveZ
 	if(key == GLUT_KEY_UP):
 		eyeY += moveY
@@ -240,6 +237,7 @@ def transformationInput():
 	print(">>> ", end='', flush=True)
 
 def commandList():
+	#Menampilkan command yang dapat dilakukan
 	if(is2D):
 		print("translate <dx> <dy>: Melakukan translasi objek dengan menggeser nilai x sebesar dx dan menggeser nilai y sebesar dy.")
 		print("dilate <k>: Melakukan dilatasi objek dengan faktor scaling k.")
@@ -259,7 +257,7 @@ def openGLDisplay():
 	glutInitWindowPosition(0,0)
 	glutCreateWindow(window_name)
 	glutDisplayFunc(display)
-	#glutReshapeFunc(changeSize)
+	glutReshapeFunc(changeSize)
 	glutKeyboardFunc(keyPressed)
 	transformationInput()
 	glutSpecialFunc(specialKey)
@@ -267,10 +265,12 @@ def openGLDisplay():
 	return
 
 def outputInstructions():
+	##Menampilkan instruksi sebelum permainan
 	print("Selamat datang di simulasi transformari geometri")
 	print("Untuk berpindah-pindah di ruang kartesian, silakan menekan arrow keys pada keyboard")
 
 def main():
+	#Main program
 	outputInstructions()
 	inputDimensionChoice()
 	if(is2D):
