@@ -131,7 +131,7 @@ def processCommand(command):
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
 	iteration = 2000
-	#try:
+	try:
 	if is3D:
 		temp = Object3D(shape.vertices,shape.edges)
 	else:
@@ -188,8 +188,8 @@ def processCommand(command):
 	temp.vertices -= shape.vertices
 	temp.vertices.M /= iteration
 	q.append([temp.vertices,iteration])
-	#except:
-	#	print("Terdapat parameter yang salah, silakan ulangi")
+	except:
+		print("Terdapat parameter yang salah, silakan ulangi")
 
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
