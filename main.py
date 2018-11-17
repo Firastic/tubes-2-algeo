@@ -10,7 +10,6 @@ from transformation import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-#import transformation
 
 is2D = False
 is3D = False
@@ -22,32 +21,7 @@ moveZ = 0.1
 eyeX = 0
 eyeY = 0
 eyeZ = 0
-
-verticies3d = Matriks([
-    ([0.1,-0.1,-0.1]),
-    ([0.1,0.1,-0.1]),
-    ([-0.1,0.1,-0.1]),
-    ([-0.1,-0.1,-0.1]),
-    ([0.1,-0.1,0.1]),
-    ([0.1,0.1,0.1]),
-    ([-0.1,-0.1,0.1]),
-    ([-0.1,0.1,0.1])
-])
-
-edges3d = ([
-    [0,1],
-    [0,3],
-    [0,4],
-    [2,1],
-    [2,3],
-    [2,7],
-    [6,3],
-    [6,4],
-    [6,7],
-    [5,1],
-    [5,4],
-    [5,7]
-])
+q = []
 
 def displayObject():
 	#Menampilkan object saat ini
@@ -67,18 +41,18 @@ def displayCartesian2D():
 
 def displayCartesian3D():
 	#Menampilkan sumbu x, y, dan z
-	glColor3f(1.0, 1.0, 1.0)
+	glColor3f(0.0, 0.0, 0.0)
 	glBegin(GL_LINES)
-	glVertex3fv((-500,0,0))
-	glVertex3fv((500,0,0))
+	glVertex3fv((-1,0,0))
+	glVertex3fv((1,0,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,-500,0))
-	glVertex3fv((0,500,0))
+	glVertex3fv((0,-1,0))
+	glVertex3fv((0,1,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,0,-500))
-	glVertex3fv((0,0,500))
+	glVertex3fv((0,0,-1))
+	glVertex3fv((0,0,1))
 	glEnd()
 
 def input2D():
@@ -93,14 +67,19 @@ def input2D():
 		x, y = map(float, input().split())
 		vertices.AddColumn([[x/10],[y/10]])
 		edges.insert(len(edges),[i,(i+1)%N])
-	print(vertices)
-	print(edges)
 	shape = Object2D(vertices, edges)
 
 def input3D():
-    global shape, verticies3d, edges3d
-    verticies3d = verticies3d.transpose()
-    shape = Object3D(verticies3d, edges3d)
+	#Meminta input untuk objek 3D
+	global shape
+	N = int(input("Masukkan nilai N\n"))
+	print("Masukkan " + str(N) + " buah titik 3 dimensi")
+	for i in range(N):
+		x, y, z = map(float, input().split())
+		arr = [x/25,y/25,z/25]
+		vertices.insert(len(vertices), arr)
+		edges.insert(len(edges),[i,(i+1)%N])
+	shape = Object3D(vertices, [edges])
 
 def inputDimensionChoice():
 	#Meminta input dimensi yang diinginkan
@@ -114,29 +93,46 @@ def inputDimensionChoice():
 	else:
 		is3D = True
 
+def change():
+	global q
+	if(not q):
+		return
+	q[0][-1] -= 1
+	if(q[0][0] == "translate"):
+		shape.translate(q[0][1],q[0][2])
+	elif(q[0][0] == "dilate"):
+		shape.dilate(q[0][1])
+	elif(q[0][0] == "rotate"):
+		shape.rotate(q[0][1],q[0][2],q[0][3])
+	elif(q[0][0] == "custom"):
+		shape.vertices -= q[0][1]
+
+	if(q[0][-1] == 0):
+		q.pop(0)
+		
+
+def hello():
+	print('hello')
+
 def processCommand(command):
-	global is3D
+	global q
+	print(command)
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
+	iteration = 2000
+	#try:
 	if(func == "translate"):
-		print(shape.vertices)
 		dx = float(parsedCommand[1])/10
 		dy = float(parsedCommand[2])/10
-		if is3D:
-			dz = float(parsedCommand[3])/10
-			shape.translate(dx,dy,dz)
-		else:
-			shape.translate(dx,dy)
-		print(dx,dy)
-		print(shape.vertices)
+		q.append(["translate",dx/iteration,dy/iteration,iteration])
 	elif(func == "dilate"):
 		k = float(parsedCommand[1])
-		shape.dilate(k)
+		q.append(["dilate", pow(k,(1.0/iteration)), iteration])
 	elif(func == "rotate"):
 		degree = float(parsedCommand[1])
 		a = float(parsedCommand[2])
 		b = float(parsedCommand[3])
-		shape.rotate(degree,a,b)
+		q.append(["rotate",degree/iteration,a,b,iteration])
 	elif(func == "reflect"):
 		param = parsedCommand[1]
 		shape.reflect(param)
@@ -154,7 +150,13 @@ def processCommand(command):
 		b = float(parsedCommand[2])
 		c = float(parsedCommand[3])
 		d = float(parsedCommand[4])
-		shape.custom(a,b,c,d)
+		temp = shape
+		temp.custom(a,b,c,d)
+		temp.vertices -= shape.vertices
+		print(temp.vertices.M)
+		temp.vertices.M /= iteration
+		print(temp.vertices.M)
+		q.append(["custom",temp.vertices,iteration])
 	elif(func == "help"):
 		commandList()
 	elif(func == "reset"):
@@ -163,7 +165,9 @@ def processCommand(command):
 		exit()
 	else:
 		print("Command tidak valid, silakan ulangi")
-	
+	#except:
+#		print("Terdapat parameter yang salah, silakan ulangi")
+
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
 	global currentCommand
@@ -192,31 +196,32 @@ def specialKey(key, x, y):
 	elif(key == GLUT_KEY_RIGHT):
 		eyeX += moveX
 	elif(key == GLUT_KEY_F1):
-		glRotate(5.0,1.0,0.0,1.0)
+		eyeZ += moveZ
 	elif(key == GLUT_KEY_F2):
-		glRotate(-5.0,1.0,0.0,1.0)
+		eyeZ -= moveZ
 
 def display():
-    global eyeX,eyeY, eyeZ, is2D
-    glClearColor(0.0,0.0,0.0,0.0)
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    glMatrixMode(GL_MODELVIEW)
-    if is2D:
-        gluLookAt(eyeX,eyeY,eyeZ,eyeX,eyeY,-1.0,0.0,1.0,0.0)
-        displayCartesian2D()
-        displayObject()
-        gluLookAt(0.0,0.0,0.0,0.0,0.0,-1.0,0.0,1.0,0.0)
-    else:
-        gluLookAt(eyeX,eyeY,eyeZ,eyeX,eyeY,-1.0,0.0,1.0,0.0)
-        displayCartesian3D()
-        displayObject()
-        gluLookAt(0.0,0.0,0.0,0.0,0.0,-1.0,0.0,1.0,0.0)
-    eyeX = 0
-    eyeY = 0
-    eyeZ = 0
-    glutSwapBuffers()
-    glutPostRedisplay()
-    return
+	#Menampilkan objek dan sumbu kartesius
+	global eyeX, eyeY, eyeZ, is2D
+	change()
+	glClearColor(0.0, 0.0, 0.0, 0.0)
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+	glMatrixMode(GL_MODELVIEW)
+	if(is2D):
+		gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
+		displayCartesian2D()
+		displayObject()
+		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
+	else:
+		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
+		displayCartesian3D()
+		displayObject()
+	eyeX = 0
+	eyeY = 0
+	eyeZ = 0
+	glutSwapBuffers()
+	glutPostRedisplay()
+	return
 
 def changeSize(w, h):
 	#Menormalisasi windows saat terjadi perubahan skala
@@ -274,4 +279,5 @@ def main():
 		input3D()
 	openGLDisplay()
 
-main()
+if __name__=='__main__':
+	main()
