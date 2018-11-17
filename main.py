@@ -10,7 +10,6 @@ from transformation import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-#import transformation
 
 is2D = False
 is3D = False
@@ -22,6 +21,7 @@ moveZ = 0.1
 eyeX = 0
 eyeY = 0
 eyeZ = 0
+q = []
 
 def displayObject():
 	#Menampilkan object saat ini
@@ -93,53 +93,81 @@ def inputDimensionChoice():
 	else:
 		is3D = True
 
+def change():
+	global q
+	if(not q):
+		return
+	q[0][-1] -= 1
+	if(q[0][0] == "translate"):
+		shape.translate(q[0][1],q[0][2])
+	elif(q[0][0] == "dilate"):
+		shape.dilate(q[0][1])
+	elif(q[0][0] == "rotate"):
+		shape.rotate(q[0][1],q[0][2],q[0][3])
+	elif(q[0][0] == "custom"):
+		shape.vertices -= q[0][1]
+
+	if(q[0][-1] == 0):
+		q.pop(0)
+		
+
+def hello():
+	print('hello')
+
 def processCommand(command):
+	global q
+	print(command)
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
-	try:
-		if(func == "translate"):
-			print(shape.vertices)
-			dx = float(parsedCommand[1])/10
-			dy = float(parsedCommand[2])/10
-			shape.translate(dx,dy)
-			print(dx,dy)
-			print(shape.vertices)
-		elif(func == "dilate"):
-			k = float(parsedCommand[1])
-			shape.dilate(k)
-		elif(func == "rotate"):
-			degree = float(parsedCommand[1])
-			a = float(parsedCommand[2])
-			b = float(parsedCommand[3])
-			shape.rotate(degree,a,b)
-		elif(func == "reflect"):
-			param = parsedCommand[1]
-			shape.reflect(param)
-		elif(func == "shear"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])
-			shape.shear(param,k)
-		elif(func == "stretch"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])
-			print(param,k)
-			shape.stretch(param,k)
-		elif(func == "custom"):
-			a = float(parsedCommand[1])
-			b = float(parsedCommand[2])
-			c = float(parsedCommand[3])
-			d = float(parsedCommand[4])
-			shape.custom(a,b,c,d)
-		elif(func == "help"):
-			commandList()
-		elif(func == "reset"):
-			shape.reset()
-		elif(func == "exit"):
-			exit()
-		else:
-			print("Command tidak valid, silakan ulangi")
-	except:
-		print("Terdapat parameter yang salah, silakan ulangi")
+	iteration = 2000
+	#try:
+	if(func == "translate"):
+		dx = float(parsedCommand[1])/10
+		dy = float(parsedCommand[2])/10
+		q.append(["translate",dx/iteration,dy/iteration,iteration])
+	elif(func == "dilate"):
+		k = float(parsedCommand[1])
+		q.append(["dilate", pow(k,(1.0/iteration)), iteration])
+	elif(func == "rotate"):
+		degree = float(parsedCommand[1])
+		a = float(parsedCommand[2])
+		b = float(parsedCommand[3])
+		q.append(["rotate",degree/iteration,a,b,iteration])
+	elif(func == "reflect"):
+		param = parsedCommand[1]
+		shape.reflect(param)
+	elif(func == "shear"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])
+		shape.shear(param,k)
+	elif(func == "stretch"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])
+		print(param,k)
+		shape.stretch(param,k)
+	elif(func == "custom"):
+		a = float(parsedCommand[1])
+		b = float(parsedCommand[2])
+		c = float(parsedCommand[3])
+		d = float(parsedCommand[4])
+		temp = shape
+		temp.custom(a,b,c,d)
+		print(temp.vertices,shape.)
+		temp.vertices -= shape.vertices
+		print(temp.vertices.M)
+		temp.vertices.M /= iteration
+		print(temp.vertices.M)
+		q.append(["custom",temp.vertices,iteration])
+	elif(func == "help"):
+		commandList()
+	elif(func == "reset"):
+		shape.reset()
+	elif(func == "exit"):
+		exit()
+	else:
+		print("Command tidak valid, silakan ulangi")
+	#except:
+#		print("Terdapat parameter yang salah, silakan ulangi")
 
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
@@ -176,6 +204,7 @@ def specialKey(key, x, y):
 def display():
 	#Menampilkan objek dan sumbu kartesius
 	global eyeX, eyeY, eyeZ, is2D
+	change()
 	glClearColor(0.0, 0.0, 0.0, 0.0)
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 	glMatrixMode(GL_MODELVIEW)
@@ -251,4 +280,5 @@ def main():
 		input3D()
 	openGLDisplay()
 
-main()
+if __name__=='__main__':
+	main()
