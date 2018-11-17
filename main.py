@@ -107,7 +107,6 @@ def processCommand(command):
 	if(q):
 		print("Sedang terjadi transformasi, silakan tunggu transformasi selesai")
 		return
-	print(command)
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
 	iteration = 2000
@@ -220,18 +219,8 @@ def display():
 	glutPostRedisplay()
 	return
 
-def changeSize(w, h):
-	#Menormalisasi windows saat terjadi perubahan skala
-	if(h == 0):
-		h = 1
-	ratio = 1.0* w / h
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()
-	glViewport(0, 0, w, h)
-	gluPerspective(45,ratio,1,1000)
-	glMatrixMode(GL_MODELVIEW)
-
 def transformationInput():
+	#Menampilkan tampilan saat menerima input
 	print("Masukkan transformasi yang diinginkan")
 	print("Ketik help untuk melihat command yang ada")
 	print(">>> ", end='', flush=True)
@@ -257,7 +246,6 @@ def openGLDisplay():
 	glutInitWindowPosition(0,0)
 	glutCreateWindow(window_name)
 	glutDisplayFunc(display)
-	glutReshapeFunc(changeSize)
 	glutKeyboardFunc(keyPressed)
 	transformationInput()
 	glutSpecialFunc(specialKey)
