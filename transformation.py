@@ -90,6 +90,9 @@ class Object():
 				glVertex3fv(self.vertices[vertex])
 		glEnd()
 
+	def reset(self):
+		self.vertices = self.initVertices
+
 
 class Object2D(Object):
 	def translate(self, dx, dy):
