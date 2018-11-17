@@ -17,6 +17,11 @@ class Matriks:
 	def AddRow(self,m):
 		self.M = np.append(self.M,m,axis = 0)
 		self.brs += 1
+	
+	def DelRow(self,idx):
+		mat = Matriks(np.delete(self.M,idx,axis = 0))
+		self.brs -= 1
+		return mat
 
 	def AddColumn(self,m):
 		self.M = np.append(self.M,m,axis = 1)
@@ -30,9 +35,6 @@ class Matriks:
 
 	def GetElmt(self,brs,kol):
 		return self.M[brs,kol]
-
-	def SetElmt(self,brs,kol,x):
-		self.M[brs,kol] = x
 
 	def transpose(self):
 		m, n = self.kol, self.brs
@@ -91,9 +93,7 @@ class Object2D(Object):
 		mhsl.AddRow([[1]*mhsl.GetNKolEff()])
 		mtrans = Matriks([[1,0,dx],[0,1,dy],[0,0,1]])
 		mhsl = mtrans*mhsl
-		for i in range(mhsl.brs-1): #buang baris terakhir
-			for j in range(mhsl.kol):
-				self.vertices.SetElmt(i,j,mhsl.GetElmt(i,j))
+		self.vertices = mhsl.DelRow(2)
 
 	def dilate(self, k):
 		#Melakukan dilatasi tiap point sebesar k
@@ -172,9 +172,7 @@ class Object3D(Object):
 		mhsl.AddRow([[1]*mhsl.GetNKolEff()])
 		mtrans = Matriks([[1,0,0,dx],[0,1,0,dy],[0,0,1,dz],[0,0,0,1]])
 		mhsl = mtrans*mhsl
-		for i in range(mhsl.brs-1): #buang baris terakhir
-			for j in range(mhsl.kol):
-				self.vertices.SetElmt(i,j,mhsl.GetElmt(i,j))
+		self.vertices = mhsl.DelRow(3)
 
 	def dilate(self, k):
 		mtrans = Matriks([[k,0,0],[0,k,0],[0,0,k]])
