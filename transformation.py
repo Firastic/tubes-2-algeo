@@ -202,24 +202,24 @@ class Object3D(Object):
 		self.vertices = mtrans*self.vertices
 
 
-	def shear(self, param, k):
+	def shear(self, param, k1 =0 ,k2=0):
 		# Bentuk matriks transformasinya : [[1 sh(yx) sh (zx)],[sh(xy),1,sh(zy)],[sh(xz),sh(yz),1]]
 		if (param == "x"):
-			mtrans = Matriks([[1,0,0],[k,1,0],[k,0,1]])
+			mtrans = Matriks([[1,0,0],[k1,1,0],[k2,0,1]])
 		elif (param == "y"):
-			mtrans = Matriks([[1,k,0],[0,1,0],[0,k,1]])
+			mtrans = Matriks([[1,k1,0],[0,1,0],[0,k2,1]])
 		elif (param == "z"):
-			mtrans = Matriks([[1,0,k],[0,1,k],[0,0,1]])
+			mtrans = Matriks([[1,0,k1],[0,1,k2],[0,0,1]])
 		self.vertices = mtrans * self.vertices
 		
 
-	def stretch(self, param, k):
+	def stretch(self, param, k1=1,k2=1):
 		if (param == "x"):
-			mtrans = Matriks([[1,0,0],[0,k,0],[0,0,k]])
+			mtrans = Matriks([[1,0,0],[0,k1,0],[0,0,k2]])
 		elif (param == "y"):
-			mtrans = Matriks([[k,0,0],[0,1,0],[0,0,k]])
+			mtrans = Matriks([[k1,0,0],[0,1,0],[0,0,k2]])
 		elif (param == "z"):
-			mtrans = Matriks([[k,0,0],[0,k,0],[0,0,1]])
+			mtrans = Matriks([[k1,0,0],[0,k2,0],[0,0,1]])
 		self.vertices = mtrans * self.vertices
 
 	def custom(self, a, b, c, d, e, f, g, h, i):
