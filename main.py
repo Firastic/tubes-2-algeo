@@ -23,6 +23,34 @@ eyeY = 0
 eyeZ = 0
 q = []
 
+verticies3d = Matriks([
+    ([0.1,-0.1,-0.1]),
+    ([0.1,0.1,-0.1]),
+    ([-0.1,0.1,-0.1]),
+    ([-0.1,-0.1,-0.1]),
+    ([0.1,-0.1,0.1]),
+    ([0.1,0.1,0.1]),
+    ([-0.1,-0.1,0.1]),
+    ([-0.1,0.1,0.1])
+])
+
+verticies3d = verticies3d.transpose()
+
+edges3d = ([
+    [0,1],
+    [0,3],
+    [0,4],
+    [2,1],
+    [2,3],
+    [2,7],
+    [6,3],
+    [6,4],
+    [6,7],
+    [5,1],
+    [5,4],
+    [5,7]
+])
+
 def displayObject():
 	#Menampilkan object saat ini
 	shape.output()
@@ -41,18 +69,18 @@ def displayCartesian2D():
 
 def displayCartesian3D():
 	#Menampilkan sumbu x, y, dan z
-	glColor3f(0.0, 0.0, 0.0)
+	glColor3f(1.0, 1.0, 1.0)
 	glBegin(GL_LINES)
-	glVertex3fv((-1,0,0))
-	glVertex3fv((1,0,0))
+	glVertex3fv((-500,0,0))
+	glVertex3fv((500,0,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,-1,0))
-	glVertex3fv((0,1,0))
+	glVertex3fv((0,-500,0))
+	glVertex3fv((0,500,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,0,-1))
-	glVertex3fv((0,0,1))
+	glVertex3fv((0,0,-500))
+	glVertex3fv((0,0,500))
 	glEnd()
 
 def input2D():
@@ -71,15 +99,8 @@ def input2D():
 
 def input3D():
 	#Meminta input untuk objek 3D
-	global shape
-	N = int(input("Masukkan nilai N\n"))
-	print("Masukkan " + str(N) + " buah titik 3 dimensi")
-	for i in range(N):
-		x, y, z = map(float, input().split())
-		arr = [x/25,y/25,z/25]
-		vertices.insert(len(vertices), arr)
-		edges.insert(len(edges),[i,(i+1)%N])
-	shape = Object3D(vertices, [edges])
+	global shape, verticies3d, edges3d
+	shape = Object3D(verticies3d, edges3d)
 
 def inputDimensionChoice():
 	#Meminta input dimensi yang diinginkan
@@ -103,65 +124,72 @@ def change():
 
 def processCommand(command):
 	#Menjalankan command yang telah diberikan
-	global q
+	global q,is3D
 	if(q):
 		print("Sedang terjadi transformasi, silakan tunggu transformasi selesai")
 		return
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
 	iteration = 2000
-	try:
+	#try:
+	if is3D:
+		temp = Object3D(shape.vertices,shape.edges)
+	else:
 		temp = Object2D(shape.vertices,shape.edges)
-		temp.initVertices = shape.initVertices
-		if(func == "translate"):
-			dx = float(parsedCommand[1])/10
-			dy = float(parsedCommand[2])/10
-			temp.translate(dx,dy)
-		elif(func == "dilate"):
-			k = float(parsedCommand[1])
-			temp.dilate(k)
-		elif(func == "rotate"):
-			degree = float(parsedCommand[1])
-			a = float(parsedCommand[2])
-			b = float(parsedCommand[3])
-			temp.rotate(degree,a,b)
-		elif(func == "reflect"):
-			param = parsedCommand[1]
-			temp.reflect(param)
-		elif(func == "shear"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])
-			temp.shear(param,k)
-		elif(func == "stretch"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])/10
-			temp.stretch(param,k)
-		elif(func == "custom"):
-			a = float(parsedCommand[1])
-			b = float(parsedCommand[2])
-			c = float(parsedCommand[3])
-			d = float(parsedCommand[4])
-			a /= 10
-			b /= 10
-			c /= 10
-			d /= 10
-			temp.custom(a,b,c,d)
-		elif(func == "help"):
-			commandList()
-			return
-		elif(func == "reset"):
-			temp.reset()
-		elif(func == "exit"):
-			exit()
-			return
+	temp.initVertices = shape.initVertices
+	if(func == "translate"):
+		dx = float(parsedCommand[1])/10
+		dy = float(parsedCommand[2])/10
+		if is3D:
+			dz = float(parsedCommand[3])/10
+			temp.translate(dx,dy,dz)
 		else:
-			print("Command tidak valid, silakan ulangi")
-			return
-		temp.vertices -= shape.vertices
-		temp.vertices.M /= iteration
-		q.append([temp.vertices,iteration])
-	except:
-		print("Terdapat parameter yang salah, silakan ulangi")
+			temp.translate(dx,dy)
+	elif(func == "dilate"):
+		k = float(parsedCommand[1])
+		temp.dilate(k)
+	elif(func == "rotate"):
+		degree = float(parsedCommand[1])
+		a = float(parsedCommand[2])
+		b = float(parsedCommand[3])
+		temp.rotate(degree,a,b)
+	elif(func == "reflect"):
+		param = parsedCommand[1]
+		temp.reflect(param)
+	elif(func == "shear"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])
+		temp.shear(param,k)
+	elif(func == "stretch"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])/10
+		temp.stretch(param,k)
+	elif(func == "custom"):
+		a = float(parsedCommand[1])
+		b = float(parsedCommand[2])
+		c = float(parsedCommand[3])
+		d = float(parsedCommand[4])
+		a /= 10
+		b /= 10
+		c /= 10
+		d /= 10
+		temp.custom(a,b,c,d)
+	elif(func == "help"):
+		commandList()
+		return
+	elif(func == "reset"):
+		temp.reset()
+	elif(func == "exit"):
+		exit()
+		return
+	else:
+		print("Command tidak valid, silakan ulangi")
+		return
+	temp.vertices -= shape.vertices
+	temp.vertices.M /= iteration
+	q.append([temp.vertices,iteration])
+	#except:
+	#	print("Terdapat parameter yang salah, silakan ulangi")
 
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
@@ -192,9 +220,9 @@ def specialKey(key, x, y):
 	elif(key == GLUT_KEY_RIGHT):
 		eyeX += moveX
 	elif(key == GLUT_KEY_F1):
-		eyeZ += moveZ
+		glRotate(5.0,1.0,0.0,1.0)
 	elif(key == GLUT_KEY_F2):
-		eyeZ -= moveZ
+		glRotate(-5.0,1.0,0.0,1.0)
 
 def display():
 	#Menampilkan objek dan sumbu kartesius
@@ -209,9 +237,10 @@ def display():
 		displayObject()
 		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
 	else:
-		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
+		gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
 		displayCartesian3D()
 		displayObject()
+		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
 	eyeX = 0
 	eyeY = 0
 	eyeZ = 0
