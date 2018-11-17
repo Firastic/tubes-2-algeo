@@ -134,7 +134,7 @@ def processCommand(command):
 			temp.shear(param,k)
 		elif(func == "stretch"):
 			param = parsedCommand[1]
-			k = float(parsedCommand[2])/10
+			k = float(parsedCommand[2])
 			temp.stretch(param,k)
 		elif(func == "custom"):
 			a = float(parsedCommand[1])
