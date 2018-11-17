@@ -35,18 +35,18 @@ verticies3d = Matriks([
 ])
 
 edges3d = ([
-    (0,1),
-    (0,3),
-    (0,4),
-    (2,1),
-    (2,3),
-    (2,7),
-    (6,3),
-    (6,4),
-    (6,7),
-    (5,1),
-    (5,4),
-    (5,7)
+    [0,1],
+    [0,3],
+    [0,4],
+    [2,1],
+    [2,3],
+    [2,7],
+    [6,3],
+    [6,4],
+    [6,7],
+    [5,1],
+    [5,4],
+    [5,7]
 ])
 
 def displayObject():
@@ -93,10 +93,13 @@ def input2D():
 		x, y = map(float, input().split())
 		vertices.AddColumn([[x/10],[y/10]])
 		edges.insert(len(edges),[i,(i+1)%N])
+	print(vertices)
+	print(edges)
 	shape = Object2D(vertices, edges)
 
 def input3D():
-    global shape
+    global shape, verticies3d, edges3d
+    verticies3d = verticies3d.transpose()
     shape = Object3D(verticies3d, edges3d)
 
 def inputDimensionChoice():
@@ -112,53 +115,55 @@ def inputDimensionChoice():
 		is3D = True
 
 def processCommand(command):
+	global is3D
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
-	try:
-		if(func == "translate"):
-			print(shape.vertices)
-			dx = float(parsedCommand[1])/10
-			dy = float(parsedCommand[2])/10
-			shape.translate(dx,dy)
-			print(dx,dy)
-			print(shape.vertices)
-		elif(func == "dilate"):
-			k = float(parsedCommand[1])
-			shape.dilate(k)
-		elif(func == "rotate"):
-			degree = float(parsedCommand[1])
-			a = float(parsedCommand[2])
-			b = float(parsedCommand[3])
-			shape.rotate(degree,a,b)
-		elif(func == "reflect"):
-			param = parsedCommand[1]
-			shape.reflect(param)
-		elif(func == "shear"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])
-			shape.shear(param,k)
-		elif(func == "stretch"):
-			param = parsedCommand[1]
-			k = float(parsedCommand[2])
-			print(param,k)
-			shape.stretch(param,k)
-		elif(func == "custom"):
-			a = float(parsedCommand[1])
-			b = float(parsedCommand[2])
-			c = float(parsedCommand[3])
-			d = float(parsedCommand[4])
-			shape.custom(a,b,c,d)
-		elif(func == "help"):
-			commandList()
-		elif(func == "reset"):
-			shape.reset()
-		elif(func == "exit"):
-			exit()
+	if(func == "translate"):
+		print(shape.vertices)
+		dx = float(parsedCommand[1])/10
+		dy = float(parsedCommand[2])/10
+		if is3D:
+			dz = float(parsedCommand[3])/10
+			shape.translate(dx,dy,dz)
 		else:
-			print("Command tidak valid, silakan ulangi")
-	except:
-		print("Terdapat parameter yang salah, silakan ulangi")
-
+			shape.translate(dx,dy)
+		print(dx,dy)
+		print(shape.vertices)
+	elif(func == "dilate"):
+		k = float(parsedCommand[1])
+		shape.dilate(k)
+	elif(func == "rotate"):
+		degree = float(parsedCommand[1])
+		a = float(parsedCommand[2])
+		b = float(parsedCommand[3])
+		shape.rotate(degree,a,b)
+	elif(func == "reflect"):
+		param = parsedCommand[1]
+		shape.reflect(param)
+	elif(func == "shear"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])
+		shape.shear(param,k)
+	elif(func == "stretch"):
+		param = parsedCommand[1]
+		k = float(parsedCommand[2])
+		print(param,k)
+		shape.stretch(param,k)
+	elif(func == "custom"):
+		a = float(parsedCommand[1])
+		b = float(parsedCommand[2])
+		c = float(parsedCommand[3])
+		d = float(parsedCommand[4])
+		shape.custom(a,b,c,d)
+	elif(func == "help"):
+		commandList()
+	elif(func == "reset"):
+		shape.reset()
+	elif(func == "exit"):
+		exit()
+	else:
+		print("Command tidak valid, silakan ulangi")
+	
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
 	global currentCommand

@@ -236,7 +236,7 @@ class Object3D(Object):
 		glBegin(GL_POLYGON)
 		for edge in self.edges:
 			for vertex in edge:
-				glVertex3fv(self.vertices.M[vertex])
+				glVertex3fv(self.vertices.transpose().M[vertex])
 		glEnd()
 
 
