@@ -110,7 +110,7 @@ def processCommand(command):
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
 	iteration = 2000
-	try:
+	try:	
 		temp = Object2D(shape.vertices,shape.edges)
 		temp.initVertices = shape.initVertices
 		if(func == "translate"):
@@ -141,10 +141,6 @@ def processCommand(command):
 			b = float(parsedCommand[2])
 			c = float(parsedCommand[3])
 			d = float(parsedCommand[4])
-			a /= 10
-			b /= 10
-			c /= 10
-			d /= 10
 			temp.custom(a,b,c,d)
 		elif(func == "help"):
 			commandList()
