@@ -43,7 +43,7 @@ class Matriks:
 		s = ""
 		for i in range(self.brs):
 			for j in range(self.kol):
-				s += "%.2f" % self.GetElmt(i, j)
+				s += "%f" % self.GetElmt(i, j)
 				if (j<self.kol-1):
 					s += " "
 				else:
@@ -65,15 +65,8 @@ class Matriks:
 	def __mul__(self,m1):
 		# Mengali matriks ini dengan matriks lain tanpa mengubah value keduanya
 		# Input selalu benar : neff kolom Matriks ini = neff baris matriks lainnya
-		mhsl = Matriks([[0]*m1.GetNKolEff() for x in range(self.GetNBrsEff())])
-		sum = 0.0
-		for i in range(mhsl.GetNBrsEff()):
-			for j in range(mhsl.GetNKolEff()):
-				for k in range (self.GetNKolEff()):
-					sum += self.GetElmt(i,k) * m1.GetElmt(k,j)
-				mhsl.SetElmt(i,j,sum)
-				sum = 0.0
-		return mhsl
+		mat = Matriks(np.matmul(self.M,m1.M))
+		return mat
 
 class Object():
 
