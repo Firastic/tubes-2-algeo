@@ -231,57 +231,58 @@ class Object3D(Object):
 		return
 
 # Ini contoh cara memakai
-n = int(input("Input N : "))
-x = float(input("x : "))
-y = float(input("y : "))
-v = Matriks([[x],[y]])
-for x in range(n-1):
+if __name__ == "__main__":
+	n = int(input("Input N : "))
 	x = float(input("x : "))
 	y = float(input("y : "))
-	v.AddColumn([[x],[y]])
-dua = Object2D(v,[[0]])
-menu = 0
-while (menu != 9):
-	print("Pilih menu : ")
-	print("1. Translasi\n2. Dilatasi\n3. Rotasi\n4. Refleksi\n5. Shear\n6. Stretch\n7. Custom\n8. Print\n9. Keluar")
-	menu = int(input("Pilih : "))
-	if (menu == 1):
-		dx = float(input("dx : "))
-		dy = float(input("dy : "))
-		dua.translate(dx,dy)
-		print(dua.vertices)
-	elif (menu == 2):
-		k = float(input("k : "))
-		dua.dilate(k)
-		print(dua.vertices)
-	elif (menu == 3):
-		d = float(input("sudut : "))
-		a = float(input("pusat x : "))
-		b = float(input("pusat y : "))
-		dua.rotate(d,a,b)
-		print(dua.vertices)
-	elif (menu == 4):
-		param = input("refleksi terhadap : ")
-		dua.reflect(param)
-		print(dua.vertices)
-	elif (menu == 5):
-		k = float(input("k : "))
-		param = input("shear terhadap : ")
-		dua.shear(param,k)
-		print(dua.vertices)
-	elif (menu == 6):
-		k = float(input("k : "))
-		param = input("stretch terhadap : ")
-		dua.stretch(param,k)
-		print(dua.vertices)
-	elif (menu == 7):
-		a = float(input("a : "))
-		b = float(input("b : "))
-		c = float(input("c : "))
-		d = float(input("d : "))
-		dua.custom(a,b,c,d)
-		print(dua.vertices)
-	elif (menu == 8) :
-		print(dua.vertices)
-	elif (menu != 9) :
-		print("Input tidak valid!")
+	v = Matriks([[x],[y]])
+	for x in range(n-1):
+		x = float(input("x : "))
+		y = float(input("y : "))
+		v.AddColumn([[x],[y]])
+	dua = Object2D(v,[[0]])
+	menu = 0
+	while (menu != 9):
+		print("Pilih menu : ")
+		print("1. Translasi\n2. Dilatasi\n3. Rotasi\n4. Refleksi\n5. Shear\n6. Stretch\n7. Custom\n8. Print\n9. Keluar")
+		menu = int(input("Pilih : "))
+		if (menu == 1):
+			dx = float(input("dx : "))
+			dy = float(input("dy : "))
+			dua.translate(dx,dy)
+			print(dua.vertices)
+		elif (menu == 2):
+			k = float(input("k : "))
+			dua.dilate(k)
+			print(dua.vertices)
+		elif (menu == 3):
+			d = float(input("sudut : "))
+			a = float(input("pusat x : "))
+			b = float(input("pusat y : "))
+			dua.rotate(d,a,b)
+			print(dua.vertices)
+		elif (menu == 4):
+			param = input("refleksi terhadap : ")
+			dua.reflect(param)
+			print(dua.vertices)
+		elif (menu == 5):
+			k = float(input("k : "))
+			param = input("shear terhadap : ")
+			dua.shear(param,k)
+			print(dua.vertices)
+		elif (menu == 6):
+			k = float(input("k : "))
+			param = input("stretch terhadap : ")
+			dua.stretch(param,k)
+			print(dua.vertices)
+		elif (menu == 7):
+			a = float(input("a : "))
+			b = float(input("b : "))
+			c = float(input("c : "))
+			d = float(input("d : "))
+			dua.custom(a,b,c,d)
+			print(dua.vertices)
+		elif (menu == 8) :
+			print(dua.vertices)
+		elif (menu != 9) :
+			print("Input tidak valid!")
