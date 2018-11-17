@@ -152,7 +152,6 @@ def processCommand(command):
 		d = float(parsedCommand[4])
 		temp = shape
 		temp.custom(a,b,c,d)
-		print(temp.vertices,shape.)
 		temp.vertices -= shape.vertices
 		print(temp.vertices.M)
 		temp.vertices.M /= iteration
