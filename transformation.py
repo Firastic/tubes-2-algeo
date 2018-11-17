@@ -34,6 +34,11 @@ class Matriks:
 	def SetElmt(self,brs,kol,x):
 		self.M[brs,kol] = x
 
+	def transpose(self):
+		m, n = self.kol, self.brs
+		mat = Matriks([[self.GetElmt(j,i) for j in range (n)] for i in range (m)])
+		return mat
+
 	def __str__(self):
 		s = ""
 		for i in range(self.brs):
@@ -242,9 +247,9 @@ if __name__ == "__main__":
 		v.AddColumn([[x],[y]])
 	dua = Object2D(v,[[0]])
 	menu = 0
-	while (menu != 9):
+	while (menu != 10):
 		print("Pilih menu : ")
-		print("1. Translasi\n2. Dilatasi\n3. Rotasi\n4. Refleksi\n5. Shear\n6. Stretch\n7. Custom\n8. Print\n9. Keluar")
+		print("1. Translasi\n2. Dilatasi\n3. Rotasi\n4. Refleksi\n5. Shear\n6. Stretch\n7. Custom\n8. Print\n9. Transpos\n10. Keluar")
 		menu = int(input("Pilih : "))
 		if (menu == 1):
 			dx = float(input("dx : "))
@@ -284,5 +289,8 @@ if __name__ == "__main__":
 			print(dua.vertices)
 		elif (menu == 8) :
 			print(dua.vertices)
-		elif (menu != 9) :
+		elif (menu == 9):
+			m = dua.vertices.transpose()
+			print(m)
+		elif (menu != 10) :
 			print("Input tidak valid!")
