@@ -104,7 +104,7 @@ class Object2D(Object):
 		#Melakukan rotasi tiap titik dengan deg derajat dengan titik pusat (a,b)
 		angle = radians(deg)
 		mtrans = Matriks([[cos(angle),-1*sin(angle)],[sin(angle),cos(angle)]])
-		mpusat = Matriks([[a],[b]])
+		mpusat = Matriks([[a/10]*self.vertices.GetNKolEff(),[b/10]*self.vertices.GetNKolEff()])
 		self.vertices = mtrans*(self.vertices - mpusat) + mpusat
 
 	def reflect(self, param):
@@ -130,7 +130,7 @@ class Object2D(Object):
 			a = float(p[0])
 			b = float(p[1])
 			mtrans = Matriks([[-1,0],[0,-1]])
-			mpusat = Matriks([[a],[b]])
+			mpusat = Matriks([[a/10]*self.vertices.GetNKolEff(),[b/10]*self.vertices.GetNKolEff()])
 			self.vertices = mtrans*(self.vertices-mpusat)+mpusat
 
 	def shear(self, param, k):
@@ -210,6 +210,8 @@ class Object3D(Object):
 			mtrans = Matriks([[1,k1,0],[0,1,0],[0,k2,1]])
 		elif (param == "z"):
 			mtrans = Matriks([[1,0,k1],[0,1,k2],[0,0,1]])
+		elif (param == "o"):
+			mtrans = Matriks([[-1,0,0],[0,-1,0],[0,0,-1]])
 		self.vertices = mtrans * self.vertices
 
 
@@ -236,7 +238,7 @@ class Object3D(Object):
 		glBegin(GL_POLYGON)
 		for edge in self.edges:
 			for vertex in edge:
-				glVertex3fv(self.vertices.transpose().M[vertex])
+				glVertex3fv(self.vertices.M[vertex])
 		glEnd()
 
 
