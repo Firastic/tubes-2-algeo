@@ -87,14 +87,6 @@ class Object():
 		self.initVertices = vertices
 		self.edges = edges
 
-	def output(self):
-		glColor3f(random.random(),random.random(),random.random())
-		glBegin(GL_POLYGON)
-		for edge in self.edges:
-			for vertex in edge:
-				glVertex3fv(self.vertices[vertex])
-		glEnd()
-
 	def reset(self):
 		self.vertices = self.initVertices
 
@@ -173,6 +165,14 @@ class Object2D(Object):
 		#Melakukan n buah transformasi
 		return
 
+	def output(self):
+		glColor3f(random.random(),random.random(),random.random())
+		glBegin(GL_POLYGON)
+		for edge in self.edges:
+			for vertex in edge:
+				glVertex2fv(self.vertices.transpose().M[vertex])
+		glEnd()
+
 class Object3D(Object):
 	def translate(self, dx, dy, dz):	
 		mhsl = Matriks([[self.vertices.GetElmt(i,j) for j in range(self.vertices.GetNKolEff())] for i in range(self.vertices.GetNBrsEff())])
@@ -237,6 +237,15 @@ class Object3D(Object):
 		#for x in range(n)
 			#...
 		return
+
+	def output(self):
+		glColor3f(random.random(),random.random(),random.random())
+		glBegin(GL_POLYGON)
+		for edge in self.edges:
+			for vertex in edge:
+				glVertex3fv(self.vertices.transpose().M[vertex])
+		glEnd()
+
 
 # Ini contoh cara memakai
 if __name__ == "__main__":
