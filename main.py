@@ -23,6 +23,32 @@ eyeX = 0
 eyeY = 0
 eyeZ = 0
 
+verticies3d = Matriks([
+    ([0.1,-0.1,-0.1]),
+    ([0.1,0.1,-0.1]),
+    ([-0.1,0.1,-0.1]),
+    ([-0.1,-0.1,-0.1]),
+    ([0.1,-0.1,0.1]),
+    ([0.1,0.1,0.1]),
+    ([-0.1,-0.1,0.1]),
+    ([-0.1,0.1,0.1])
+])
+
+edges3d = ([
+    (0,1),
+    (0,3),
+    (0,4),
+    (2,1),
+    (2,3),
+    (2,7),
+    (6,3),
+    (6,4),
+    (6,7),
+    (5,1),
+    (5,4),
+    (5,7)
+])
+
 def displayObject():
 	#Menampilkan object saat ini
 	shape.output()
@@ -41,18 +67,18 @@ def displayCartesian2D():
 
 def displayCartesian3D():
 	#Menampilkan sumbu x, y, dan z
-	glColor3f(0.0, 0.0, 0.0)
+	glColor3f(1.0, 1.0, 1.0)
 	glBegin(GL_LINES)
-	glVertex3fv((-1,0,0))
-	glVertex3fv((1,0,0))
+	glVertex3fv((-500,0,0))
+	glVertex3fv((500,0,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,-1,0))
-	glVertex3fv((0,1,0))
+	glVertex3fv((0,-500,0))
+	glVertex3fv((0,500,0))
 	glEnd()
 	glBegin(GL_LINES)
-	glVertex3fv((0,0,-1))
-	glVertex3fv((0,0,1))
+	glVertex3fv((0,0,-500))
+	glVertex3fv((0,0,500))
 	glEnd()
 
 def input2D():
@@ -70,16 +96,8 @@ def input2D():
 	shape = Object2D(vertices, edges)
 
 def input3D():
-	#Meminta input untuk objek 3D
-	global shape
-	N = int(input("Masukkan nilai N\n"))
-	print("Masukkan " + str(N) + " buah titik 3 dimensi")
-	for i in range(N):
-		x, y, z = map(float, input().split())
-		arr = [x/25,y/25,z/25]
-		vertices.insert(len(vertices), arr)
-		edges.insert(len(edges),[i,(i+1)%N])
-	shape = Object3D(vertices, [edges])
+    global shape
+    shape = Object3D(verticies3d, edges3d)
 
 def inputDimensionChoice():
 	#Meminta input dimensi yang diinginkan
@@ -169,31 +187,31 @@ def specialKey(key, x, y):
 	elif(key == GLUT_KEY_RIGHT):
 		eyeX += moveX
 	elif(key == GLUT_KEY_F1):
-		eyeZ += moveZ
+		glRotate(5.0,1.0,0.0,1.0)
 	elif(key == GLUT_KEY_F2):
-		eyeZ -= moveZ
+		glRotate(-5.0,1.0,0.0,1.0)
 
 def display():
-	#Menampilkan objek dan sumbu kartesius
-	global eyeX, eyeY, eyeZ, is2D
-	glClearColor(0.0, 0.0, 0.0, 0.0)
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-	glMatrixMode(GL_MODELVIEW)
-	if(is2D):
-		gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian2D()
-		displayObject()
-		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
-	else:
-		gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian3D()
-		displayObject()
-	eyeX = 0
-	eyeY = 0
-	eyeZ = 0
-	glutSwapBuffers()
-	glutPostRedisplay()
-	return
+    global eyeX,eyeY, eyeZ, is2D
+    glClearColor(0.0,0.0,0.0,0.0)
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glMatrixMode(GL_MODELVIEW)
+    if is2D:
+        gluLookAt(eyeX,eyeY,eyeZ,eyeX,eyeY,-1.0,0.0,1.0,0.0)
+        displayCartesian2D()
+        displayObject()
+        gluLookAt(0.0,0.0,0.0,0.0,0.0,-1.0,0.0,1.0,0.0)
+    else:
+        gluLookAt(eyeX,eyeY,eyeZ,eyeX,eyeY,-1.0,0.0,1.0,0.0)
+        displayCartesian3D()
+        displayObject()
+        gluLookAt(0.0,0.0,0.0,0.0,0.0,-1.0,0.0,1.0,0.0)
+    eyeX = 0
+    eyeY = 0
+    eyeZ = 0
+    glutSwapBuffers()
+    glutPostRedisplay()
+    return
 
 def changeSize(w, h):
 	#Menormalisasi windows saat terjadi perubahan skala

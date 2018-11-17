@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Matriks:
-	
+
 	def __init__(self,m = [[0]]):
 		# Inisialisasi semua elemen matriks diisi 0
 		self.M = np.array(m)
@@ -18,7 +18,7 @@ class Matriks:
 		self.M = np.append(self.M,m,axis = 0)
 		self.brs += 1
 
-	def AddColumn(self,m):		
+	def AddColumn(self,m):
 		self.M = np.append(self.M,m,axis = 1)
 		self.kol += 1
 
@@ -98,14 +98,14 @@ class Object2D(Object):
 	def dilate(self, k):
 		#Melakukan dilatasi tiap point sebesar k
 		mtrans = Matriks([[k,0],[0,k]])
-		self.vertices = mtrans*self.vertices 
+		self.vertices = mtrans*self.vertices
 
 	def rotate(self, deg, a, b):
 		#Melakukan rotasi tiap titik dengan deg derajat dengan titik pusat (a,b)
 		angle = radians(deg)
 		mtrans = Matriks([[cos(angle),-1*sin(angle)],[sin(angle),cos(angle)]])
 		mpusat = Matriks([[a],[b]])
-		self.vertices = mtrans*(self.vertices - mpusat) + mpusat 
+		self.vertices = mtrans*(self.vertices - mpusat) + mpusat
 
 	def reflect(self, param):
 		#Melakukan refleksi dengan parameter
@@ -132,7 +132,7 @@ class Object2D(Object):
 			mtrans = Matriks([[-1,0],[0,-1]])
 			mpusat = Matriks([[a],[b]])
 			self.vertices = mtrans*(self.vertices-mpusat)+mpusat
-		
+
 	def shear(self, param, k):
 		#Melakukan operasi shear pada objek
 		if (param == "x"):
@@ -167,7 +167,7 @@ class Object2D(Object):
 		glEnd()
 
 class Object3D(Object):
-	def translate(self, dx, dy, dz):	
+	def translate(self, dx, dy, dz):
 		mhsl = Matriks([[self.vertices.GetElmt(i,j) for j in range(self.vertices.GetNKolEff())] for i in range(self.vertices.GetNBrsEff())])
 		mhsl.AddRow([[1]*mhsl.GetNKolEff()])
 		mtrans = Matriks([[1,0,0,dx],[0,1,0,dy],[0,0,1,dz],[0,0,0,1]])
@@ -211,7 +211,7 @@ class Object3D(Object):
 		elif (param == "z"):
 			mtrans = Matriks([[1,0,k1],[0,1,k2],[0,0,1]])
 		self.vertices = mtrans * self.vertices
-		
+
 
 	def stretch(self, param, k1=1,k2=1):
 		if (param == "x"):
@@ -232,11 +232,11 @@ class Object3D(Object):
 		return
 
 	def output(self):
-		glColor3f(random.random(),random.random(),random.random())
+		glColor3f(1.0,1.0,1.0)
 		glBegin(GL_POLYGON)
 		for edge in self.edges:
 			for vertex in edge:
-				glVertex3fv(self.vertices.transpose().M[vertex])
+				glVertex3fv(self.vertices.M[vertex])
 		glEnd()
 
 
