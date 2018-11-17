@@ -12,8 +12,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 #import transformation
 
-vertices = []
-edges = []
 is2D = False
 is3D = False
 window_name = 'cartesian'
@@ -62,11 +60,12 @@ def input2D():
 	global shape
 	N = int(input("Masukkan nilai N\n"))
 	print("Masukkan " + str(N) + " buah titik 2 dimensi")
-	for i in range(N):
+	x, y = map(float, input().split())
+	vertices = Matriks([[x/10],[y/10]])
+	edges = []
+	for i in range(N-1):
 		x, y = map(float, input().split())
-		z = 0
-		arr = [x/10,y/10,z]
-		vertices.insert(len(vertices), arr)
+		vertices.AddColumn([[x/10],[y/10]])
 		edges.insert(len(edges),[i,(i+1)%N])
 	shape = Object2D(vertices, edges)
 
@@ -80,7 +79,7 @@ def input3D():
 		arr = [x/25,y/25,z/25]
 		vertices.insert(len(vertices), arr)
 		edges.insert(len(edges),[i,(i+1)%N])
-	shape = Object3D(vertices, edges)
+	shape = Object3D(vertices, [edges])
 
 def inputDimensionChoice():
 	#Meminta input dimensi yang diinginkan
@@ -97,20 +96,50 @@ def inputDimensionChoice():
 def processCommand(command):
 	parsedCommand = command.split(' ')
 	func = parsedCommand[0].lower()
-	if(func == "translate"):
-		return
-	elif(func == "dilate"):
-		return
-	elif(func == "rotate"):
-		return
-	elif(func == "reflect"):
-		return
-	elif(func == "shear"):
-		return
-	elif(func == "stretch"):
-		return
-	elif(func == "custom"):
-		return
+	try:
+		if(func == "translate"):
+			print(shape.vertices)
+			dx = float(parsedCommand[1])/10
+			dy = float(parsedCommand[2])/10
+			shape.translate(dx,dy)
+			print(dx,dy)
+			print(shape.vertices)
+		elif(func == "dilate"):
+			k = float(parsedCommand[1])
+			shape.dilate(k)
+		elif(func == "rotate"):
+			degree = float(parsedCommand[1])
+			a = float(parsedCommand[2])
+			b = float(parsedCommand[3])
+			shape.rotate(degree,a,b)
+		elif(func == "reflect"):
+			param = parsedCommand[1]
+			shape.reflect(param)
+		elif(func == "shear"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])
+			shape.shear(param,k)
+		elif(func == "stretch"):
+			param = parsedCommand[1]
+			k = float(parsedCommand[2])
+			print(param,k)
+			shape.stretch(param,k)
+		elif(func == "custom"):
+			a = float(parsedCommand[1])
+			b = float(parsedCommand[2])
+			c = float(parsedCommand[3])
+			d = float(parsedCommand[4])
+			shape.custom(a,b,c,d)
+		elif(func == "help"):
+			commandList()
+		elif(func == "reset"):
+			shape.reset()
+		elif(func == "exit"):
+			exit()
+		else:
+			print("Command tidak valid, silakan ulangi")
+	except:
+		print("Terdapat parameter yang salah, silakan ulangi")
 
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
@@ -179,7 +208,20 @@ def changeSize(w, h):
 
 def transformationInput():
 	print("Masukkan transformasi yang diinginkan")
+	print("Ketik help untuk melihat command yang ada")
 	print(">>> ", end='', flush=True)
+
+def commandList():
+	if(is2D):
+		print("translate <dx> <dy>: Melakukan translasi objek dengan menggeser nilai x sebesar dx dan menggeser nilai y sebesar dy.")
+		print("dilate <k>: Melakukan dilatasi objek dengan faktor scaling k.")
+		print("rotate <deg> <a> <b>: Melakukan rotasi objek secara berlawanan arah jarum jam sebesar deg derajat terhadap titik a,b")
+		print("reflect <param>: Melakukan pencerminan objek. Nilai param adalah salah satu dari nilainilai berikut: x, y, y=x, y=-x, atau (a,b). Nilai (a,b) adalah titik untuk melakukan pencerminan terhadap.")
+		print("shear <param> <k>: Melakukan operasi shear pada objek. Nilai param dapat berupa x (terhadap sumbu x) atau y (terhadap sumbu y). Nilai k adalah faktor shear.")
+		print("stretch <param> <k>: Melakukan operasi stretch pada objek. Nilai param dapat berupa x (terhadap sumbu x) atau y (terhadap sumbu y). Nilai k adalah faktor stretch.")
+		print("Melakukan transformasi linier pada objek dengan matriks transformasi [[a,b],[c,d]]")
+		print("reset: Mengembalikan objek pada kondisi awal objek didefinisikan.")
+		print("exit: Keluar dari program.")
 
 def openGLDisplay():
 	#Menampilkan tampilan openGL
