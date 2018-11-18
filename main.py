@@ -52,29 +52,85 @@ def displayObject():
 
 def displayCartesian2D():
 	#Menampilkan sumbu x dan y
-	glColor3f(1.0, 1.0, 1.0)
+	#X Axis
+	glPushAttrib(GL_ENABLE_BIT)
+	glLineStipple(1, 0xAAAA)
+	glEnable(GL_LINE_STIPPLE)
+	glColor3f(1.0, 0, 0)
 	glBegin(GL_LINES)
 	glVertex3fv((-500,0,0))
+	glVertex3fv((0,0,0))
+	glEnd()
+	glPopAttrib()
+
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,0))
 	glVertex3fv((500,0,0))
 	glEnd()
+
+	#Y Axis
+	glPushAttrib(GL_ENABLE_BIT)
+	glLineStipple(1, 0xAAAA)
+	glEnable(GL_LINE_STIPPLE)
+	glColor3f(0, 1.0, 0)
 	glBegin(GL_LINES)
 	glVertex3fv((0,-500,0))
+	glVertex3fv((0,0,0))
+	glEnd()
+	glPopAttrib()
+
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,0))
 	glVertex3fv((0,500,0))
 	glEnd()
 
 def displayCartesian3D():
 	#Menampilkan sumbu x, y, dan z
-	glColor3f(1.0, 1.0, 1.0)
+	#X Axis
+	glPushAttrib(GL_ENABLE_BIT)
+	glLineStipple(1, 0xAAAA)
+	glEnable(GL_LINE_STIPPLE)
+	glColor3f(1.0, 0, 0)
 	glBegin(GL_LINES)
 	glVertex3fv((-500,0,0))
+	glVertex3fv((0,0,0))
+	glEnd()
+	glPopAttrib()
+
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,0))
 	glVertex3fv((500,0,0))
 	glEnd()
+
+	#Y Axis
+	glPushAttrib(GL_ENABLE_BIT)
+	glLineStipple(1, 0xAAAA)
+	glEnable(GL_LINE_STIPPLE)
+	glColor3f(0, 1.0, 0)
 	glBegin(GL_LINES)
 	glVertex3fv((0,-500,0))
+	glVertex3fv((0,0,0))
+	glEnd()
+	glPopAttrib()
+
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,0))
 	glVertex3fv((0,500,0))
 	glEnd()
+
+	#Z Axis
+	glPushAttrib(GL_ENABLE_BIT)
+	glLineStipple(1, 0xAAAA)
+	glEnable(GL_LINE_STIPPLE)
+	glColor3f(0, 0, 1.0)
 	glBegin(GL_LINES)
 	glVertex3fv((0,0,-500))
+	glVertex3fv((0,0,0))
+	glEnd()
+	glPopAttrib()
+
+	glBegin(GL_LINES)
+	glVertex3fv((0,0,0))
 	glVertex3fv((0,0,500))
 	glEnd()
 
