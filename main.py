@@ -181,11 +181,15 @@ def inputDimensionChoice():
 		is3D = True
 
 def change():
+	global is3D
 	#Mengubah nilai titik sesuai yang diinginkan secara minimal
 	if(q):
 		q[0][-1] -= 1
 		if(q[0][0] == "rotate"):
-			shape.rotate(q[0][1],q[0][2],q[0][3])
+			if is3D:
+				shape.rotate(q[0][1],q[0][2],q[0][3],q[0][4])    
+			else:
+				shape.rotate(q[0][1],q[0][2],q[0][3])
 		else:
 			shape.vertices += q[0][0]
 		if(q[0][-1] == 0):
@@ -223,7 +227,7 @@ def processCommand(command):
 			b = float(parsedCommand[3])
 			if is3D:
 				c = float(parsedCommand[4])
-				temp.rotate(degree,a,b,c)
+				q.append(["rotate", degree/iteration,a,b,c,iteration])
 			else:
 				q.append(["rotate", degree/iteration,a,b,iteration])
 		elif(func == "reflect"):
