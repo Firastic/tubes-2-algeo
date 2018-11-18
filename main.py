@@ -125,11 +125,11 @@ def change():
 	if(q):
 		q[0][-1] -= 1
 		if(q[0][0] == "rotate"):
-
+			shape.rotate(q[0][1],q[0][2],q[0][3])
 		else:
 			shape.vertices += q[0][0]
-			if(q[0][-1] == 0):
-				q.pop(0)
+		if(q[0][-1] == 0):
+			q.pop(0)
 
 def processCommand(command):
 	#Menjalankan command yang telah diberikan
@@ -165,7 +165,7 @@ def processCommand(command):
 				c = float(parsedCommand[4])
 				temp.rotate(degree,a,b,c)
 			else:
-				temp.rotate(degree,a,b)
+				q.append(["rotate", degree/iteration,a,b,iteration])
 		elif(func == "reflect"):
 			param = parsedCommand[1]
 			temp.reflect(param)
@@ -202,9 +202,11 @@ def processCommand(command):
 		else:
 			print("Command tidak valid, silakan ulangi")
 			return
-		temp.vertices -= shape.vertices
-		temp.vertices.M /= iteration
-		q.append([temp.vertices,iteration])
+
+		if(func != "rotate"):
+			temp.vertices -= shape.vertices
+			temp.vertices.M /= iteration
+			q.append([temp.vertices,iteration])
 	except:
 		print("Terdapat parameter yang salah, silakan ulangi")
 
