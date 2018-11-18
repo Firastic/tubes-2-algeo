@@ -50,41 +50,7 @@ def displayObject():
 	#Menampilkan object saat ini
 	shape.output()
 
-def displayCartesian2D():
-	#Menampilkan sumbu x dan y
-	#X Axis
-	glPushAttrib(GL_ENABLE_BIT)
-	glLineStipple(1, 0xAAAA)
-	glEnable(GL_LINE_STIPPLE)
-	glColor3f(1.0, 0, 0)
-	glBegin(GL_LINES)
-	glVertex3fv((-500,0,0))
-	glVertex3fv((0,0,0))
-	glEnd()
-	glPopAttrib()
-
-	glBegin(GL_LINES)
-	glVertex3fv((0,0,0))
-	glVertex3fv((500,0,0))
-	glEnd()
-
-	#Y Axis
-	glPushAttrib(GL_ENABLE_BIT)
-	glLineStipple(1, 0xAAAA)
-	glEnable(GL_LINE_STIPPLE)
-	glColor3f(0, 1.0, 0)
-	glBegin(GL_LINES)
-	glVertex3fv((0,-500,0))
-	glVertex3fv((0,0,0))
-	glEnd()
-	glPopAttrib()
-
-	glBegin(GL_LINES)
-	glVertex3fv((0,0,0))
-	glVertex3fv((0,500,0))
-	glEnd()
-
-def displayCartesian3D():
+def displayCartesian():
 	#Menampilkan sumbu x, y, dan z
 	#X Axis
 	glPushAttrib(GL_ENABLE_BIT)
@@ -324,16 +290,15 @@ def display():
 	glClearColor(0.0, 0.0, 0.0, 0.0)
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 	glMatrixMode(GL_MODELVIEW)
-	if(is2D):
-		gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian2D()
-		displayObject()
-		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
-	else:
-		gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
-		displayCartesian3D()
-		displayObject()
-		gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
+	
+	displayCartesian()
+	gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
+	displayObject()
+	gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
+	gluLookAt(eyeX, eyeY, eyeZ, eyeX, eyeY, -1.0, 0.0, 1.0,  0.0);
+	displayObject()
+	gluLookAt(0, 0, 0, 0, 0, -1.0, 0.0, 1.0,  0.0);
+
 	eyeX = 0
 	eyeY = 0
 	eyeZ = 0
