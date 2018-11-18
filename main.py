@@ -250,7 +250,15 @@ def processCommand(command):
 			b = float(parsedCommand[2])
 			c = float(parsedCommand[3])
 			d = float(parsedCommand[4])
-			temp.custom(a,b,c,d)
+			if is3D:
+				e = float(parsedCommand[5])
+				f = float(parsedCommand[6])
+				g = float(parsedCommand[7])
+				h = float(parsedCommand[8])
+				i = float(parsedCommand[9])
+				temp.custom(a,b,c,d,e,f,g,h,i)
+			else:
+				temp.custom(a,b,c,d)
 		elif(func == "help"):
 			commandList()
 			return
