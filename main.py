@@ -162,6 +162,7 @@ def input2D():
 		shape = Object2D(vertices, edges)
 	else:
 		shape = Object2D(Matriks([[0],[0]]),[])
+
 def input3D():
 	#Meminta input untuk objek 3D
 	global shape, verticies3d, edges3d
