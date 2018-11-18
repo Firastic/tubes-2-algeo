@@ -15,6 +15,7 @@ moveZ = 0.1
 eyeX = 0
 eyeY = 0
 eyeZ = 0
+isEnd = False
 q = []
 
 verticies3d = Matriks([
@@ -81,17 +82,8 @@ def input2D():
 	#Meminta input untuk objek 2D
 	global shape
 	N = int(input("Masukkan nilai N\n"))
-	print("Masukkan " + str(N) + " buah titik 2 dimensi")
-	valid = False
-	while(not valid):
-		try:
-			x, y = map(float, input().split())
-			valid = True
-		except:
-			print("Harap memasukkan 2 buah angka dipisahkan oleh spasi")
-	vertices = Matriks([[x/10],[y/10]])
-	edges = []
-	for i in range(N-1):
+	if(N > 0):
+		print("Masukkan " + str(N) + " buah titik 2 dimensi")
 		valid = False
 		while(not valid):
 			try:
@@ -99,10 +91,21 @@ def input2D():
 				valid = True
 			except:
 				print("Harap memasukkan 2 buah angka dipisahkan oleh spasi")
-		vertices.AddColumn([[x/10],[y/10]])
-		edges.insert(len(edges),[i,(i+1)%N])
-	shape = Object2D(vertices, edges)
-
+		vertices = Matriks([[x/10],[y/10]])
+		edges = []
+		for i in range(N-1):
+			valid = False
+			while(not valid):
+				try:
+					x, y = map(float, input().split())
+					valid = True
+				except:
+					print("Harap memasukkan 2 buah angka dipisahkan oleh spasi")
+			vertices.AddColumn([[x/10],[y/10]])
+			edges.insert(len(edges),[i,(i+1)%N])
+		shape = Object2D(vertices, edges)
+	else:
+		shape = Object2D(Matriks([[0],[0]]),[])
 def input3D():
 	#Meminta input untuk objek 3D
 	global shape, verticies3d, edges3d
@@ -133,7 +136,7 @@ def change():
 
 def processCommand(command):
 	#Menjalankan command yang telah diberikan
-	global q,is3D
+	global q,is3D,isEnd
 	if(q):
 		print("Sedang terjadi transformasi, silakan tunggu transformasi selesai")
 		return
@@ -197,7 +200,8 @@ def processCommand(command):
 		elif(func == "reset"):
 			temp.reset()
 		elif(func == "exit"):
-			exit()
+			glutLeaveMainLoop()
+			isEnd = True
 			return
 		else:
 			print("Command tidak valid, silakan ulangi")
@@ -217,7 +221,8 @@ def keyPressed(key, x, y):
 		print(end='\n',flush=True)
 		processCommand(currentCommand)
 		currentCommand = ""
-		transformationInput()
+		if(not isEnd):
+			transformationInput()
 		return
 	elif(ord(key) == 8): #Backspace
 		key = '\b \b'
