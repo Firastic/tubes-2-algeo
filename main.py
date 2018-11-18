@@ -1,15 +1,9 @@
-# Receive point
-# Create display
-# Create point
-# Receive Operation
-# Update display
-
 import OpenGL
 import random
-from transformation import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from transformation import *
 
 is2D = False
 is3D = False
@@ -88,11 +82,23 @@ def input2D():
 	global shape
 	N = int(input("Masukkan nilai N\n"))
 	print("Masukkan " + str(N) + " buah titik 2 dimensi")
-	x, y = map(float, input().split())
+	valid = False
+	while(not valid):
+		try:
+			x, y = map(float, input().split())
+			valid = True
+		except:
+			print("Harap memasukkan 2 buah angka dipisahkan oleh spasi")
 	vertices = Matriks([[x/10],[y/10]])
 	edges = []
 	for i in range(N-1):
-		x, y = map(float, input().split())
+		valid = False
+		while(not valid):
+			try:
+				x, y = map(float, input().split())
+				valid = True
+			except:
+				print("Harap memasukkan 2 buah angka dipisahkan oleh spasi")
 		vertices.AddColumn([[x/10],[y/10]])
 		edges.insert(len(edges),[i,(i+1)%N])
 	shape = Object2D(vertices, edges)
@@ -118,9 +124,12 @@ def change():
 	#Mengubah nilai titik sesuai yang diinginkan secara minimal
 	if(q):
 		q[0][-1] -= 1
-		shape.vertices += q[0][0]
-		if(q[0][-1] == 0):
-			q.pop(0)
+		if(q[0][0] == "rotate"):
+
+		else:
+			shape.vertices += q[0][0]
+			if(q[0][-1] == 0):
+				q.pop(0)
 
 def processCommand(command):
 	#Menjalankan command yang telah diberikan
@@ -181,10 +190,6 @@ def processCommand(command):
 			b = float(parsedCommand[2])
 			c = float(parsedCommand[3])
 			d = float(parsedCommand[4])
-			a /= 10
-			b /= 10
-			c /= 10
-			d /= 10
 			temp.custom(a,b,c,d)
 		elif(func == "help"):
 			commandList()
@@ -206,13 +211,13 @@ def processCommand(command):
 def keyPressed(key, x, y):
 	#Menampilkan output pada terminal saat OpenGL telah dijalankan
 	global currentCommand
-	if(ord(key) == 13):
+	if(ord(key) == 13): #Newline
 		print(end='\n',flush=True)
 		processCommand(currentCommand)
 		currentCommand = ""
 		transformationInput()
 		return
-	elif(ord(key) == 8):
+	elif(ord(key) == 8): #Backspace
 		key = '\b \b'
 		print('\b \b', end='', flush=True)
 		currentCommand = currentCommand[:-1]
